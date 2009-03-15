@@ -1,6 +1,5 @@
 /*
    strings/lincefr.h
-   Author: Danilo Rodrigues <danilod100@gmail.com>
    Desc. : Lincefr strings header
 */
 

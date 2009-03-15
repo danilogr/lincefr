@@ -1,6 +1,5 @@
 /*
    lincefr.c
-   Author: Danilo Rodrigues <danilod100@gmail.com>
    Desc. : Lincefr main file
 */
 

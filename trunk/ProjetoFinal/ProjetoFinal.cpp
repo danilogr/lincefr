@@ -2,62 +2,94 @@
 //
 
 #include "stdafx.h"
+#include "util\matrix.h"
+#include "util\nonsimd.h"
+#include <Windows.h>
+#include <WinBase.h>
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	// Declara ponteiros para matrizes A,B,C,D
-	// Declara escalares
+     //OBJETIVO PROVAR =  A(BC) = (AB)C
+     int **mA;
+     int **mB;
+     int **mC;
+     int **resultado1,**resultado2;
+     int **parte1;
 
-	// ---------------------------------------
-	// Teste 1 - 4 x 4
-	// Alocação dinâmica de A,B,C,D
-	// Chama F1 - função em C
-	// Exibe resultado
-
-	// Chama F2 - função em C + ASM
-	// Exibe resultado
-
-	// Desaloca as matrizes A,B,C,D
-
-
-	// ---------------------------------------
-	// Teste 2 - 16 x 16
-	// Alocação dinâmica de A,B,C,D
-	// Chama F1 - função em C
-	// Exibe resultado
-
-	// Chama F2 - função em C + ASM
-	// Exibe resultado
-
-	// Desaloca as matrizes A,B,C,D
-
-	
-	
-	// ---------------------------------------
-	// Teste 3 - 64 X 64
-	// Alocação dinâmica de A,B,C,D
-	// Chama F1 - função em C
-	// Exibe resultado
-
-	// Chama F2 - função em C + ASM
-	// Exibe resultado
-
-	// Desaloca as matrizes A,B,C,D
-
-	// ---------------------------------------
-	// Teste 4 - 101 X 101
-	// Alocação dinâmica de A,B,C,D
-	// Chama F1 - função em C
-	// Exibe resultado
-
-	// Chama F2 - função em C + ASM
-	// Exibe resultado
-
-	// Desaloca as matrizes A,B,C,D
+     int tamanho[] = {4,16,64,101,256};
+     int initialTime, finalTime;
 
 
 
+     /*
+         Teremos um loop que percorrerá o vetor tamanhos para definir os tamanhos das matrizex
+     */
+     //
+
+     for(int i = 0; i < 5; i++)
+     {
+          int tamanhoAtual = tamanho[i];
+          
+          // Aloca as tres matrizes de calculo
+          mA = newMatrix(tamanhoAtual);
+          mB = newMatrix(tamanhoAtual);
+          mC = newMatrix(tamanhoAtual);
+
+          // Aloca as matrizes utilizadas para os resultados das multplicações
+          resultado1  = newMatrix(tamanhoAtual);
+          resultado2  = newMatrix(tamanhoAtual);
+          parte1      = newMatrix(tamanhoAtual);
+
+          // Preenche as matrizes com valores aleatorios
+          fillMatrix(mA,tamanhoAtual);
+          fillMatrix(mB,tamanhoAtual);
+          fillMatrix(mC,tamanhoAtual);
+
+          /*
+              Multiplicação de matrizes sem o auxilio de instruções SIMD
+          */
+
+          printf("Normal [%03d] - ",tamanhoAtual);
+
+          initialTime = GetTickCount();
+
+          // A(BC) = Ax(BC)' = Ax(C'B') = Ax(C'xB)
+          squareTranspose(mC,tamanhoAtual);
+          multiplyMatrix(parte1,mC,mB,tamanhoAtual);
+          multiplyMatrix(resultado1,mA,parte1,tamanhoAtual);
+
+          // (AB)C = (AxB')xC'
+          squareTranspose(mB,tamanhoAtual);
+          multiplyMatrix(parte1,mA,mB,tamanhoAtual);
+          multiplyMatrix(resultado2,parte1,mC,tamanhoAtual);
+
+
+          squareTranspose(mB,tamanhoAtual);
+          squareTranspose(mC,tamanhoAtual);
+
+          finalTime = GetTickCount();
+
+          finalTime -= initialTime;
+
+          if (equalMatrixes(resultado1,resultado2,tamanhoAtual))
+               printf("[OK]");
+          else
+               printf("[FAIL]");
+
+          printf(" - %05d ms\n", finalTime);
+
+
+          //Desaloca as matrizes da memoria
+          deleteMatrix(mA);
+          deleteMatrix(mB);
+          deleteMatrix(mC);
+          deleteMatrix(resultado1);
+          deleteMatrix(resultado2);
+          deleteMatrix(parte1);
+                
+
+     }
 
 	return 0;
 

@@ -167,10 +167,7 @@ public class Aquario extends JPanel {
      * no momento de sua morte
      * @param sm o ser que morreu e precisa ser removido do aquário
      */
-    public void removerSerMarinho(SerMarinho sm) {
-        seresMarinhos.remove(sm);
-        energiaNutrientes += sm.getEnergia();
-    }
+    
 }
 
 

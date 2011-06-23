@@ -9,8 +9,6 @@ import org.jdesktop.application.FrameView;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import simaqua.modelo.Aquario;
-import simaqua.modelo.Atum;
-import simaqua.modelo.Sardinha;
 import simaqua.modelo.Simulacao;
 
 /**
@@ -79,7 +77,6 @@ public class SimaquaView extends FrameView {
      * Método chamado quando o usuário clica em "Atum"
      */
     private void adicionarAtum() {
-        getAquario().adicionarSerMarinho(new Atum());
     }
     /**
      * Método chamado quando o usuário clica em "Cavalo Marinho"
@@ -95,7 +92,6 @@ public class SimaquaView extends FrameView {
      * Método chamado quando o usuário clica em "Sardinha"
      */
     private void adicionarSardinha() {
-        getAquario().adicionarSerMarinho(new Sardinha());
     }
     /**
      * Método chamado quando o usuário clica em "Siri"

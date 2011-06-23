@@ -154,6 +154,10 @@ public class Aquario extends JPanel {
         }
         repaint();
     }
+    
+    /*
+     *    omg!
+     */
 
     /**
      * Remove um ser do aquário. Sua energia é devolvida

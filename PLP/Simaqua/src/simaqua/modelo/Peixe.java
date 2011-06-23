@@ -12,55 +12,83 @@ import simaqua.utils.Utilitarios;
  * @author Daniel
  */
 public abstract class Peixe extends SerMarinho{
-    protected int posicaoInicial,dir;
+    protected int distPercorridaX,distPercorridaY, dirX, dirY;
     protected String iconeEsq, iconeDir;
-    
+
     public Peixe(int energia, String iconeEsq, String iconeDir, Color cor){
         super(energia, iconeDir, cor);
         this.iconeDir = iconeDir;
         this.iconeEsq = iconeEsq;
-        posicaoInicial = getX();
-        dir = Utilitarios.numeroAleatorio(0,1); // 0 = esquerda, 1 = direita
+        
+        distPercorridaX = 0;
+        distPercorridaY = 0;
+        
+        dirX = Utilitarios.numeroAleatorio(0,1); // 0 = esquerda, 1 = direita
+        dirY = Utilitarios.numeroAleatorio(0,1);
     } 
     
-    public int getDir() {
-        return dir;
+    public int getDistPercorridaX() {
+        return distPercorridaX;
     }
 
-    public void setDir(int dir) {
-        this.dir = dir;
+    public void setDistPercorridaX(int distPercorridaX) {
+        this.distPercorridaX = distPercorridaX;
     }
 
-    public int getPosicaoInicial() {
-        return posicaoInicial;
+    public int getDistPercorridaY() {
+        return distPercorridaY;
     }
 
-    public void setPosicaoInicial(int posicaoInicial) {
-        this.posicaoInicial = posicaoInicial;
+    public void setDistPercorridaY(int distPercorridaY) {
+        this.distPercorridaY = distPercorridaY;
+    }
+     
+    public int getDirX() {
+        return dirX;
+    }
+
+    public void setDirX(int dirX) {
+        this.dirX = dirX;
     }
     
-    
-    
+    public int getDirY() {
+        return dirY;
+    }
+
+    public void setDirY(int dirY) {
+        this.dirY = dirY;
+    }
+  
     
     public void movimento(){
-        int xAtual = getX();  
-        
-        int distPercorrida = xAtual - getPosicaoInicial();
-        if (Utilitarios.numeroAleatorio(0,1000) < distPercorrida){
-            setDir(1 - dir);
-            setPosicaoInicial(xAtual);
+        int xAtual = getX(); 
+        int yAtual = getY();
+       
+        if (Utilitarios.numeroAleatorio(0,5000) < distPercorridaX){
+            setDirX(1 - getDirX());
         }
-        else if(dir == 0){
-            setX(xAtual-2);
+        else if(getDirX() == 0){
+            setX(xAtual-3);
+            distPercorridaX += 3;
             setIcone(iconeEsq);
         }
         else{
-            setX(xAtual+2);
+            setX(xAtual+3);
+            distPercorridaX += 3;
             setIcone(iconeDir);
         }
         
-        int movY = Utilitarios.numeroAleatorio(-10, 10);
-        setY(getY() + movY);
+        if (Utilitarios.numeroAleatorio(0,600) < distPercorridaY){
+            setDirY(1 - getDirY());
+        }
+        else if(getDirY() == 0){
+            setY(yAtual-1);
+            distPercorridaY += 1;
+        }
+        else{
+            setY(yAtual+1);
+            distPercorridaY += 1;
+        }
 
     }
     

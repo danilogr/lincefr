@@ -12,7 +12,7 @@ import java.awt.Color;
  */
 public class Atum extends Peixe{
     public Atum(){
-        super(2000,"<((-<",">-))>",Color.GRAY);
+        super(2000,"<(=<",">=)>",Color.GREEN);
         
     }
     

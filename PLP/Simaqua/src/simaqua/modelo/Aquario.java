@@ -44,7 +44,7 @@ public class Aquario extends JPanel {
      * Numa segunda etapa, a lista é esvaziada e a energia
      * de nutrientes restabelecida
      */
-    public void inicializarAquario() {
+    public synchronized void inicializarAquario() {
         for (SerMarinho sm : seresMarinhos) {
             sm.matar();
         }
@@ -59,7 +59,7 @@ public class Aquario extends JPanel {
      * (iniciando a Thread do ser)
      * @param sm o ser marinho a ser incluído
      */
-    public void adicionarSerMarinho(SerMarinho sm) {
+    public synchronized void adicionarSerMarinho(SerMarinho sm) {
         sm.setAmbiente(this);
         sm.setX(Utilitarios.numeroAleatorio(0, getLargura()));
         sm.setY(Utilitarios.numeroAleatorio(0, getAltura()));
@@ -72,7 +72,7 @@ public class Aquario extends JPanel {
      * @param sm o ser de referência
      * @return os seres próximos a sm (considerando a distância de caça de sm)
      */
-    public List<SerMarinho> getSeresMarinhosProximos(SerMarinho sm) {
+    public synchronized List<SerMarinho> getSeresMarinhosProximos(SerMarinho sm) {
         List<SerMarinho> seresProximos = new ArrayList<SerMarinho>();
         for (SerMarinho sm2 : seresMarinhos) {
             if (sm.proximo(sm2)) {
@@ -88,7 +88,7 @@ public class Aquario extends JPanel {
      * nele vivem
      * @return a energia total do aquário
      */
-    public int getEnergiaTotal() {
+    public synchronized int getEnergiaTotal() {
         int energiaTotal = energiaNutrientes;
         for (SerMarinho sm : seresMarinhos) {
             energiaTotal += sm.getEnergia();
@@ -101,15 +101,15 @@ public class Aquario extends JPanel {
      * à energia de nutrientes do aquário
      * @param energiaDevolvida quantidade de energia a ser acrescentada ao aquário
      */
-    public void devolverEnergia(int energiaDevolvida) {
+    public synchronized void devolverEnergia(int energiaDevolvida) {
         energiaNutrientes += energiaDevolvida;
     }
 
-    public int getAltura() {
+    public synchronized int getAltura() {
         return getHeight();
     }
 
-    public int getLargura() {
+    public synchronized int getLargura() {
         return getWidth();
     }
 
@@ -119,7 +119,7 @@ public class Aquario extends JPanel {
      * @param g
      */
     @Override
-    public void paintComponent(Graphics g) {
+    public synchronized void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(new Color(0, 0, 128));
         g.fillRect(0, 0, getWidth(), getHeight() - 50);
@@ -165,7 +165,7 @@ public class Aquario extends JPanel {
      * @param sm o ser que morreu e precisa ser removido do aquário
      */
 
-    public void removerSerMarinho(SerMarinho sm) {
+    public synchronized void removerSerMarinho(SerMarinho sm) {
         seresMarinhos.remove(sm);
         energiaNutrientes += sm.getEnergia(); // Pega energia
         // lol

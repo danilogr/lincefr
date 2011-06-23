@@ -12,7 +12,7 @@ import java.awt.Color;
  */
 public class Sardinha extends Peixe{
     public Sardinha(){
-        super(1000,"<(-<",">-)>",Color.WHITE);
+        super(1000,"<=<",">=>",Color.WHITE);
         
     }
     

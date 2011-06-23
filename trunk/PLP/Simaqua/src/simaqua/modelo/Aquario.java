@@ -168,3 +168,9 @@ public class Aquario extends JPanel {
         energiaNutrientes += sm.getEnergia();
     }
 }
+
+
+/*
+     Modificar
+ 
+ */

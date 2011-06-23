@@ -23,8 +23,8 @@ public abstract class Peixe extends SerMarinho{
         distPercorridaX = 0;
         distPercorridaY = 0;
         
-        dirX = Utilitarios.numeroAleatorio(0,1); // 0 = esquerda, 1 = direita
-        dirY = Utilitarios.numeroAleatorio(0,1);
+        dirX = Utilitarios.numeroAleatorio((int)0,(int)1); // 0 = esquerda, 1 = direita
+        dirY = Utilitarios.numeroAleatorio((int)0,(int)1);
     } 
     
     public int getDistPercorridaX() {
@@ -59,6 +59,7 @@ public abstract class Peixe extends SerMarinho{
         this.dirY = dirY;
     }
   
+    //teste
     
     public void movimento(){
         int xAtual = getX(); 

@@ -89,6 +89,7 @@
     </ClCompile>
     <ClCompile Include="util\matrix.cpp" />
     <ClCompile Include="util\nonsimd.cpp" />
+    <ClCompile Include="util\sse2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

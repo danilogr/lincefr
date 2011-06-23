@@ -81,6 +81,9 @@ public class SimaquaView extends FrameView {
     private void adicionarAtum() {
         getAquario().adicionarSerMarinho(new Atum());
     }
+    
+    //teste
+    
     /**
      * Método chamado quando o usuário clica em "Cavalo Marinho"
      */

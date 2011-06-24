@@ -46,8 +46,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
      bool resultado;
      int  tamanhoAtual;
-    
-
+  
      for(int i = 0; i < 4; i++)
      {
           tamanhoAtual = tamanho[i];

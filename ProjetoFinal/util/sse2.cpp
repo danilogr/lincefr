@@ -56,13 +56,14 @@ loopLinhasA:
                     //primeiro vamos somar 2 simultaneamente
                     pshufd xmm1,xmm0, 0x1E                            // coloca dois numeros no registrador xmm1
                     paddd  xmm1,xmm0                                  // soma os inteiros
+                    
 
                     //
                     // Adiciona ambos na soma total
                     //  
-                    pextrd edi,xmm1,1
+                    pextrd edi,xmm1,0
                     add    esi,edi
-                    pextrd edi,xmm1,2
+                    pextrd edi,xmm1,1
                     add    esi,edi
 
                     mov edi, dword ptr [order]                        // edi = order

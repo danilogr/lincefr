@@ -2,7 +2,7 @@
 #include "matrix.h"
 
 
-void squareTranspose(int **matrix, unsigned int order)
+void transposexMatrix(int **matrix, unsigned int order)
 {
        
      __asm
@@ -73,13 +73,9 @@ LoopColuna:
           pop esi                       //
           pop edi                       //
 
-          mov eax,0xCAFEBABE
      }
 
 }
-
-
-
 
 
 
@@ -89,14 +85,14 @@ LoopColuna:
     como uma matriz
 
 */
-int **newMatrix(int order)
+int **newxMatrix(int order)
 {
      int **firstpos;
      int *reservedMemory =  (int *)_aligned_malloc(order*order*sizeof(int),16);
 
      if (reservedMemory == NULL)
      {
-              printf("Fatal Error: Memory allocation error!");
+              fprintf(stderr,"Fatal Error: Memory allocation error (order = %d)!\n",order);
               return NULL;
      }
 
@@ -127,7 +123,7 @@ void printMatrix(int **matrix, int order)
      for (int register i = 0; i < order; i++)
      {
           for (int register j = 0; j < order; j++)
-               printf("%3d ",matrix[i][j]);
+               printf("%4d ",matrix[i][j]);
           printf("\n");
      }
 
@@ -137,17 +133,18 @@ void printMatrix(int **matrix, int order)
 void fillMatrix(int **matrix, int order)
 {
 
-       srand((unsigned int)time(NULL));
+
        for( register int i = 0; i < order; i++)
           for ( register int j = 0; j < order; j++)
-               matrix[i][j] = rand();
+           //    matrix[i][j] = rand();
+                 matrix[i][j] = i- j;
          
 }
 
 
 
 
-void deleteMatrix(int **matrix)
+void deletexMatrix(int **matrix)
 {
      _aligned_free(matrix[0]);
 

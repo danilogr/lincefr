@@ -46,7 +46,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
      bool resultado;
      int  tamanhoAtual;
-     
+    
 
      for(int i = 0; i < 4; i++)
      {
@@ -219,25 +219,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 
 }
-/*
-
-void F1(*A, *B, *C, *D)
-{
-	// código
-	return
-}
-
-
-void F2(*A, *B, *C, *D)
-{
-	// código
-
-	__asm{
-
-
-	}
-
-	return
-}
-
-*/

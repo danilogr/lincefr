@@ -37,6 +37,20 @@ void multiplyMatrix(int **result, int **a, int **b, int order)
 }
 
 
+bool equalxMatrixes(int **a, int **b, int order)
+{
+     int register j = order;
+     j*=j;
+
+     
+
+     for (int register i = 0; i < j; i++)
+               if( *(a[0] + i) != *(b[0] + i ))
+                         return false;
+
+     return true;
+}
+
 bool equalMatrixes(int **a, int **b, int order)
 {
      for (int register i = 0; i < order; i++)

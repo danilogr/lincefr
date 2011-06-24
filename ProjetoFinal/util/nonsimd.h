@@ -10,5 +10,5 @@
 
 
 void multiplyMatrix(int **result, int **a, int **b, int order);
-
+bool equalxMatrixes(int **a, int **b, int order);
 bool equalMatrixes(int **a, int **b, int order);

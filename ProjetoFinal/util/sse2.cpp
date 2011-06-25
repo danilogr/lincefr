@@ -12,7 +12,7 @@
 
 */
 
-void SSE2_multiplyxMatrix(int **result, int **a, int **b, int order)
+void SSE2_multiplyxMatrixAligned(int **result, int **a, int **b, int order)
 {
      int linhaA, linhaB, colunaAtual, order2;
  
@@ -92,8 +92,8 @@ loopLinhasA:
                add ecx, edi                                           // Retorna o numero necessario de bytes
                add eax, edi                                           // para conseguir pegar soh numeros da matrix
 
-               movdqa xmm0,[ecx]                                      //
-               movdqa xmm1,[eax]                                      //
+               movdqu xmm0,[ecx]                                      //
+               movdqu xmm1,[eax]                                      //
 
                pmulld  xmm1,xmm0                                      // multiplica (note que nao eh alinhada)
 
@@ -154,6 +154,152 @@ continuaNormal:
 
 }
 
+/*
+    multiplica duas xMatrix utilizando SSE2 para matrizes que nao sao multiplas de 4
+
+*/
+
+void SSE2_multiplyxMatrix(int **result, int **a, int **b, int order)
+{
+     int linhaA, linhaB, colunaAtual, order2;
+ 
+__asm
+     {
+          push esi                                          // salva esi
+          push edi                                          // salva edi
+
+          mov eax, dword ptr [order]                        // Transforma order
+          shr eax,2                                         // em um numero divisivel
+          shl eax,2
+          mov dword ptr [order2],eax                        // por 4 e coloca em order2
+
+          mov eax, dword ptr [a]                            //
+          mov ebx, dword ptr [b]                            //
+          mov eax, dword ptr [eax]                          //
+          mov ebx, dword ptr [ebx]                          //
+          mov edx, dword ptr [result]                       //
+          mov edx, dword ptr [edx]                          //
+
+          mov [linhaA], 0
+loopLinhasA:
+
+          mov ecx, ebx                                      // ecx possui a posicao atual da primeira linha
+          mov [linhaB], 0
+     loopLinhasB:
+          mov esi, 0                                        // soma da multiplicaçao
+          mov [colunaAtual],0                               // coluna 0
+          push eax
+          loopColunas:
+
+                    //
+                    // Primeiro multiplica 4
+                    //
+
+                    movdqu xmm0,[ecx]                                 // pega 4 inteiros da linha a ser multiplicada
+                    movdqu xmm1,[eax]                                 // pega 4 inteiros da linha atual da matriz a
+                    add    ecx,16                                     // proximos 4 inteiros
+                    add    eax,16  
+                    pmulld xmm0,xmm1                                  // multiplica os valores
+
+                    //
+                    // Depois soma os 4
+                    //
+
+                    //primeiro vamos somar 2 simultaneamente
+                    pshufd xmm1,xmm0, 0x1E                            // coloca dois numeros no registrador xmm1
+                    paddd  xmm1,xmm0                                  // soma os inteiros
+                    
+
+                    //
+                    // Adiciona ambos na soma total
+                    //  
+                    pextrd edi,xmm1,0
+                    add    esi,edi
+                    pextrd edi,xmm1,1
+                    add    esi,edi
+
+                    mov edi, dword ptr [order2]                       // edi = order2
+                    add dword ptr[colunaAtual],4                      // incrementa a coluna atual (4 colunas)
+                    cmp dword ptr[colunaAtual],edi                    // verifica se o loop precisa ser repetido
+                    jb loopColunas                                    //  
+
+               //
+               // Após sair do loop de colunas existe a possibilidade de existirem elementos
+               // que ainda nao foram computados (quando order não é divisivel por 4)
+               // O codigo foi escrito para fazer no maximo 1 multiplicacao
+               //
+
+               mov edi, dword ptr [order]
+               sub edi, dword ptr [order2]                            
+               jz continuaNormal                                      // se order = order2
+
+               // caso contrario edi é igual a quantidade de numeros que faltam ser multiplicados
+               sub edi,4                                              // (pois edi entre 0 e 3)
+               shl edi,2                                              // multiplica por 4
+               add ecx, edi                                           // Retorna o numero necessario de bytes
+               add eax, edi                                           // para conseguir pegar soh numeros da matrix
+
+               movdqu xmm0,[ecx]                                      //
+               movdqu xmm1,[eax]                                      //
+
+               pmulld  xmm1,xmm0                                      // multiplica (note que nao eh alinhada)
+
+               sub ecx,edi                                            // recupera
+               //sub eax,edi                                            // os valores (nao precisa ser recuperado)
+
+               sar edi,2                                              // se order - order2 = 1
+               neg edi                                                // entao edi = 3
+               
+               // Note que utilizamos eax já que o 
+               // mesmo encontra-se salvo na pilha
+               // e vai ser recuperado apos o EIP sair do loop
+somaUm:  
+               pextrd eax,xmm1,3                                      // pega o numero e soma ele
+               add esi,eax                                            // na soma total
+               add ecx,4                                              // cada numero representa 1 byte em ecx
+     
+               pshufd  xmm1,xmm1,0x93                                  // faz um rotate
+               inc edi
+               cmp edi,4                                              // se apenas um numero precisava ser somado
+               jb  somaUm                                             // entao
+              
+
+
+continuaNormal:
+               pop eax
+               // saindo do loop de colunas (ou seja, apos multiplicar e somar todas as colunas
+               // estamos prontos para salvar o resultado na matriz resultado
+
+               mov edi, dword ptr [order]
+               mov [edx], esi                                         // edx recebe o resultado
+               add edx,4                                              // proximo inteiro
+
+               inc dword ptr [linhaB]
+               cmp [linhaB], edi                                      // note que edi possui a ordem
+               jb loopLinhasB
+
+
+
+          // incrementa uma linha em eax
+         // mov  edi, dword ptr [order]                       // order em EDI
+          shl  edi,2                                        // multiplica por 4 ( a order que está em edi)
+          add  eax,edi                                      // soma em eax
+
+          inc [linhaA]                                      // incrementa a linha atual
+          shr  edi,2                                        //
+          cmp dword ptr [linhaA],edi                        // compara a linha atual com a ordem
+          jb loopLinhasA                                    // se for menor, repete o loop
+
+
+          pop edi                                           // restaura edi
+          pop esi                                           // restaura esi
+          
+
+     }
+
+
+
+}
 
 
 /*

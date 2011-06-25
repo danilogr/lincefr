@@ -7,6 +7,7 @@
 */
 
 
+void SSE2_multiplyxMatrixAligned(int **result, int **a, int **b, int order);
 void SSE2_multiplyxMatrix(int **result, int **a, int **b, int order);
 
 bool SSE2_equalMatrixes(int **a, int **b, int order);

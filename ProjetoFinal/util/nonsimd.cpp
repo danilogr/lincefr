@@ -43,7 +43,6 @@ bool equalxMatrixes(int **a, int **b, int order)
      j*=j;
 
      
-
      for (int register i = 0; i < j; i++)
                if( *(a[0] + i) != *(b[0] + i ))
                          return false;

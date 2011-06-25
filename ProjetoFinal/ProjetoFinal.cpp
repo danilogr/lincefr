@@ -20,7 +20,10 @@ int _tmain(int argc, _TCHAR* argv[])
      int **resultado1,**resultado2;
      int **parte1;
 
-     int tamanho[] = {4,16,64,128};
+     //int tamanho[] = {4,16,64,128};
+
+     int tamanho[] = {5,6,7,8};
+
      int initialTime, finalTime;
      double tempoTotal,tempoTotalSSE2;
      int totalCertos,totalCertosSSE2;
@@ -46,7 +49,42 @@ int _tmain(int argc, _TCHAR* argv[])
 
      bool resultado;
      int  tamanhoAtual;
-  
+     for(int i = 0; i< 4; i++)
+     {
+          printf("Teste tamanho %4d",tamanho[i]);
+          tamanhoAtual = tamanho[i];
+                    // Aloca as tres matrizes de calculo
+          mA = newxMatrix(tamanhoAtual);
+          mB = newxMatrix(tamanhoAtual);
+          
+          fillMatrix(mA,tamanhoAtual);
+          fillMatrix(mB,tamanhoAtual);
+          
+          resultado1  = newxMatrix(tamanhoAtual);
+          resultado2  = newxMatrix(tamanhoAtual);
+          transposexMatrix(mB, tamanhoAtual);
+
+          SSE2_multiplyxMatrix(resultado1,mA,mB,tamanhoAtual);
+          multiplyMatrix(resultado2,mA,mB,tamanhoAtual);
+
+          if (SSE2_equalxMatrixes(resultado1,resultado2,tamanhoAtual))
+          {
+               printf(" - [OK]\n");
+          }
+       
+
+
+          deletexMatrix(mA);
+          deletexMatrix(mB);
+          deletexMatrix(resultado2);
+      
+
+          deletexMatrix(resultado1);
+
+          system("PAUSE");
+
+     }
+
      for(int i = 0; i < 4; i++)
      {
           tamanhoAtual = tamanho[i];

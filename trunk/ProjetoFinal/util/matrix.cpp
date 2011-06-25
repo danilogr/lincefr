@@ -133,7 +133,7 @@ void fillMatrix(int **matrix, int order)
 
        for( register int i = 0; i < order; i++)
           for ( register int j = 0; j < order; j++)
-                 matrix[i][j] = i -j;
+                 matrix[i][j] = rand();
          
 }
 

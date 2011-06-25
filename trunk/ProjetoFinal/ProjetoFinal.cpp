@@ -20,9 +20,10 @@ int _tmain(int argc, _TCHAR* argv[])
      int **resultado1,**resultado2;
      int **parte1;
 
-     //int tamanho[] = {4,16,64,128};
+     int tamanho[] = {4,16,127,128};
+     #define TAMVETOR sizeof(tamanho)/4
 
-     int tamanho[] = {5,6,7,8};
+     //int tamanho[] = {5,6,7,8};
 
      int initialTime, finalTime;
      double tempoTotal,tempoTotalSSE2;
@@ -35,10 +36,6 @@ int _tmain(int argc, _TCHAR* argv[])
      system("PAUSE");
     
 
-     /*
-          Adicionar a verificação da disponibilidade do SSE2 através do CPUID
-     
-     */
 
 
      /*
@@ -49,7 +46,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
      bool resultado;
      int  tamanhoAtual;
-     for(int i = 0; i< 4; i++)
+
+     //
+     // AB = AxB'
+     //
+
+     for(int i = 0; i< TAMVETOR; i++)
      {
           printf("Teste tamanho %4d",tamanho[i]);
           tamanhoAtual = tamanho[i];
@@ -63,8 +65,15 @@ int _tmain(int argc, _TCHAR* argv[])
           resultado1  = newxMatrix(tamanhoAtual);
           resultado2  = newxMatrix(tamanhoAtual);
           transposexMatrix(mB, tamanhoAtual);
+          if(tamanhoAtual % 4 == 0)
+          {
+                SSE2_multiplyxMatrixAligned(resultado1,mA,mB,tamanhoAtual);
+         
+          } else {
+                SSE2_multiplyxMatrix(resultado1,mA,mB,tamanhoAtual);
+         
+          }
 
-          SSE2_multiplyxMatrix(resultado1,mA,mB,tamanhoAtual);
           multiplyMatrix(resultado2,mA,mB,tamanhoAtual);
 
           if (SSE2_equalxMatrixes(resultado1,resultado2,tamanhoAtual))
@@ -81,11 +90,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
           deletexMatrix(resultado1);
 
-          system("PAUSE");
-
      }
 
-     for(int i = 0; i < 4; i++)
+     printf("\n");
+
+     for(int i = 0; i < TAMVETOR; i++)
      {
           tamanhoAtual = tamanho[i];
 
@@ -177,30 +186,53 @@ int _tmain(int argc, _TCHAR* argv[])
                   Multiplicação de matrizes com auxilo de SIMD -> SSE2
                */
 
-               initialTime = GetTickCount();
+               if(tamanhoAtual % 4 == 0)
+               {
+                    initialTime = GetTickCount();
 
-               // Parte 1
-               // A(BC) = Ax(BC)' = Ax(C'B') = Ax(C'xB)
-               transposexMatrix(mC,tamanhoAtual);
-               SSE2_multiplyxMatrix(parte1,mC,mB,tamanhoAtual);
-               SSE2_multiplyxMatrix(resultado1,mA,parte1,tamanhoAtual);
+                    // Parte esquerda
+                    // A(BC) = Ax(BC)' = Ax(C'B') = Ax(C'xB)
+                    transposexMatrix(mC,tamanhoAtual);
+                    SSE2_multiplyxMatrixAligned(parte1,mC,mB,tamanhoAtual);
+                    SSE2_multiplyxMatrixAligned(resultado1,mA,parte1,tamanhoAtual);
 
-               // Parte 2
-               // (AB)C = (AxB')xC'
-               transposexMatrix(mB,tamanhoAtual);
-               SSE2_multiplyxMatrix(parte1,mA,mB,tamanhoAtual);
-               SSE2_multiplyxMatrix(resultado2,parte1,mC,tamanhoAtual);
+                    // Parte direita
+                    // (AB)C = (AxB')xC'
+                    transposexMatrix(mB,tamanhoAtual);
+                    SSE2_multiplyxMatrixAligned(parte1,mA,mB,tamanhoAtual);
+                    SSE2_multiplyxMatrixAligned(resultado2,parte1,mC,tamanhoAtual);
+
+
+
+               } else {
+                    initialTime = GetTickCount();
+
+                    // Parte esquerda
+                    // A(BC) = Ax(BC)' = Ax(C'B') = Ax(C'xB)
+                    transposexMatrix(mC,tamanhoAtual);
+                    SSE2_multiplyxMatrix(parte1,mC,mB,tamanhoAtual);
+                    SSE2_multiplyxMatrix(resultado1,mA,parte1,tamanhoAtual);
+
+                    // Parte direita
+                    // (AB)C = (AxB')xC'
+                    transposexMatrix(mB,tamanhoAtual);
+                    SSE2_multiplyxMatrix(parte1,mA,mB,tamanhoAtual);
+                    SSE2_multiplyxMatrix(resultado2,parte1,mC,tamanhoAtual);
+
+               }
+             
 
                // Rearranja as matrizes
                transposexMatrix(mB,tamanhoAtual);
                transposexMatrix(mC,tamanhoAtual);
 
-               // Compara as partes 1 e 2
-               resultado = SSE2_equalxMatrixes(resultado1,resultado2,tamanhoAtual);
-
                // Obtem a diferença de tempos
                finalTime = GetTickCount();
                finalTime -= initialTime;
+
+               // Compara as partes 1 e 2
+               resultado = SSE2_equalxMatrixes(resultado1,resultado2,tamanhoAtual);
+
 
                // obtem maximo e minimo
                if(j == 0)

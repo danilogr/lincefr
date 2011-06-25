@@ -12,10 +12,11 @@ import simaqua.utils.Utilitarios;
  *
  * @author Daniel
  */
-public class Plancton extends SerMarinho {
-    public static final int ENERGIA_PLANCTON = 100;
-    public Plancton() {
-        super(ENERGIA_PLANCTON,1,".", Color.BLUE);
+public abstract class Plancton extends SerMarinho {
+    
+    public Plancton(int energia, int velocidade, String icone, Color cor) {
+        super(energia,velocidade,icone,cor);
+        
     }
 
     public void movimento() {
@@ -25,23 +26,5 @@ public class Plancton extends SerMarinho {
         setY(getY() + movY);
     }
 
-    @Override
-    public boolean comFome() {
-        return false;
-    }
 
-
-    @Override
-    protected void cacar() {
-    }
-
-    @Override
-    public boolean isPresa(SerMarinho sm) {
-        return false;
-    }
-
-    @Override
-    public int getDistanciaParaCacar() {
-        return 0;
-    }
 }

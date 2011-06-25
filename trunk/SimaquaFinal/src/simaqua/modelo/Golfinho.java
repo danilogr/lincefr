@@ -74,7 +74,7 @@ public class Golfinho extends SerMarinho{
     }
         
     public int getDistanciaParaCacar(){
-        return 5;
+        return 15;
     }
     
     public boolean isPresa(SerMarinho sm){

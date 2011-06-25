@@ -147,11 +147,16 @@ public class Aquario extends JPanel {
      * Caso haja energia suficiente, uma nova vida (Plancton)
      * é criada a partir dos nutrientes.
      */
-    public void passagemDoTempo() {
-        if (energiaNutrientes >= Plancton.ENERGIA_PLANCTON) {
-            energiaNutrientes -= Plancton.ENERGIA_PLANCTON;
-            adicionarSerMarinho(new Plancton());
+    public synchronized void passagemDoTempo() {
+        if (energiaNutrientes >= FitoPlancton.ENERGIA_FITOPLANCTON) {
+            energiaNutrientes -= FitoPlancton.ENERGIA_FITOPLANCTON;
+            adicionarSerMarinho(new FitoPlancton());
         }
+        if (energiaNutrientes >= ZooPlancton.ENERGIA_ZOOPLANCTON) {
+            energiaNutrientes -= ZooPlancton.ENERGIA_ZOOPLANCTON;
+            adicionarSerMarinho(new ZooPlancton());
+        }
+        
         repaint();
     }
     

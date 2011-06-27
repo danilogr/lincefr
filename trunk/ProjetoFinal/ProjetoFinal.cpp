@@ -20,10 +20,8 @@ int _tmain(int argc, _TCHAR* argv[])
      int **resultado1,**resultado2;
      int **parte1;
 
-     int tamanho[] = {4,16,127,128};
+     int tamanho[] = {4,16,64,101};
      #define TAMVETOR sizeof(tamanho)/4
-
-     //int tamanho[] = {5,6,7,8};
 
      int initialTime, finalTime;
      double tempoTotal,tempoTotalSSE2;

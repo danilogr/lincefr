@@ -66,7 +66,7 @@ LoopColuna:
           cmp  ecx, esi                 // se for
           inc  esi                      // (nao modifica carry)
           jb   LoopLinha                //        menor que a ultima linha, continua no loop
-          // jb = jc
+                                        // jb = jc
 
 
           pop ebp                       //
@@ -143,5 +143,6 @@ void fillMatrix(int **matrix, int order)
 void deletexMatrix(int **matrix)
 {
      _aligned_free(matrix[0]);
+     delete matrix;
 
 }

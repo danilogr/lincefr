@@ -19,7 +19,7 @@ public abstract class SerMarinho extends Thread {
        Variaveis utilizadas para resolver problemas de concorrência
     */
     
-    
+    private final Object vitalidadeLock = new Object();
     
     
     /**
@@ -136,14 +136,19 @@ public abstract class SerMarinho extends Thread {
      * ao ambiente
      */
     protected void metabolizar() {
-        int quantidadeMetabolizada = Utilitarios.numeroAleatorio(1, velocidadeMetabolismo);
-        if (quantidadeMetabolizada > energiaAlimento) {
-            quantidadeMetabolizada = energiaAlimento;
+        int quantidadeMetabolizada;
+        synchronized(ambiente)
+        {
+            quantidadeMetabolizada = Utilitarios.numeroAleatorio(1, velocidadeMetabolismo);
+            if (quantidadeMetabolizada > energiaAlimento) {
+                quantidadeMetabolizada = energiaAlimento;
+            }
+            if (energiaAlimento > 0) {
+                energiaAlimento -= quantidadeMetabolizada;
+            }
+             getAmbiente().devolverEnergia(quantidadeMetabolizada);
         }
-        if (energiaAlimento > 0) {
-            energiaAlimento -= quantidadeMetabolizada;
-        }
-        getAmbiente().devolverEnergia(quantidadeMetabolizada);
+       
     }
 
     /**
@@ -153,19 +158,21 @@ public abstract class SerMarinho extends Thread {
      * se encontrar alguma presa, devorar um deles (qualquer um,
      * desde que esteja próximo)
      */
-    protected void cacar() {
+    protected  void cacar() {
+         synchronized(ambiente)
+                {
         if (comFome()) {
             List<SerMarinho> seresProximos = getAmbiente().getSeresMarinhosProximos(this);
             for (SerMarinho sm : seresProximos) {
-                synchronized(sm)
-                {
-                    if (sm.getEnergia() > 0 && isPresa(sm)) {
+               
+                    if ( isPresa(sm)) {
                         devorar(sm);
                         return;
                     }
-                }
+                
             }
         }
+                }
     }
 
     /**
@@ -196,13 +203,18 @@ public abstract class SerMarinho extends Thread {
      * @param alimento o ser marinho a ser devorado
      */
     private void devorar(SerMarinho alimento) {
-           velocidadeMetabolismo = Math.abs(energia - alimento.getEnergia()) / 10;
-           energiaAlimento += alimento.getEnergia();
-        /*
-            O alimento é morto antes de ser digerido, assim evitamos que o mesmo seja
-         * comido por outro animal
-         */
-        alimento.matar();
+      
+       synchronized(ambiente)
+       {
+                   velocidadeMetabolismo = Math.abs(energia - alimento.getEnergia()) / 10;
+                   energiaAlimento += alimento.getEnergia();
+                /*
+                    O alimento é morto antes de ser digerido, assim evitamos que o mesmo seja
+                 * comido por outro animal ou que fique comendo quando já deveria ter morrido.
+                 */
+                alimento.matar();
+       }
+        
         digerir();
     }
 
@@ -225,10 +237,13 @@ public abstract class SerMarinho extends Thread {
      * irá padecer mais rapidamente.
      */
     protected void envelhecer() {
-        if (comFome()) {
-                vitalidade -= 5000 / (1 + energia);
-        } else {
-            vitalidade -= 500 / (energia + 1);
+        synchronized(ambiente)
+        {
+            if (comFome()) {
+                    vitalidade -= 5000 / (1 + energia);
+            } else {
+                vitalidade -= 500 / (energia + 1);
+            }
         }
         try {
             Thread.sleep(1000 / Simulacao.VELOCIDADE);
@@ -241,9 +256,12 @@ public abstract class SerMarinho extends Thread {
      * Corresponde a "matar" um ser marinho
      */
     public void matar() {
-        vitalidade = 0;
-        energia = 0;
-        energiaAlimento = 0;
+        synchronized(ambiente)
+        {
+            vitalidade = 0;
+            energia = 0;
+            energiaAlimento = 0;
+        }
     }
 
     /**
@@ -349,10 +367,16 @@ public abstract class SerMarinho extends Thread {
      * @return a energia de um ser marinho
      */
     public int getEnergia() {
-        return energia + energiaAlimento;
+        synchronized(ambiente)
+        {
+            return energia + energiaAlimento;
+        }
     }
 
     public double getVitalidade() {
-        return vitalidade;
+        synchronized(ambiente)
+        {
+            return vitalidade;
+        }
     }
 }

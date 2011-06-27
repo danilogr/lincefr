@@ -11,7 +11,7 @@ import java.awt.Color;
  * @author d4n1l0d
  */
 public class ZooPlancton extends Plancton {
-    public static final int ENERGIA_ZOOPLANCTON = 150;
+    public static final int ENERGIA_ZOOPLANCTON = 250;
 
     public ZooPlancton()
     {

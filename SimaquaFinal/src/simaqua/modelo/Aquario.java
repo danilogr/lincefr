@@ -89,10 +89,15 @@ public class Aquario extends JPanel {
      * @return a energia total do aquário
      */
     public synchronized int getEnergiaTotal() {
-        int energiaTotal = energiaNutrientes;
+        int energiaTotal;
+       
+        energiaTotal = energiaNutrientes;
+           
         for (SerMarinho sm : seresMarinhos) {
-            energiaTotal += sm.getEnergia();
+             energiaTotal += sm.getEnergia();
         }
+            
+        
         return energiaTotal;
     }
 
@@ -102,14 +107,16 @@ public class Aquario extends JPanel {
      * @param energiaDevolvida quantidade de energia a ser acrescentada ao aquário
      */
     public synchronized void devolverEnergia(int energiaDevolvida) {
+      
         energiaNutrientes += energiaDevolvida;
+        
     }
 
-    public synchronized int getAltura() {
+    public int getAltura() {
         return getHeight();
     }
 
-    public synchronized int getLargura() {
+    public int getLargura() {
         return getWidth();
     }
 
@@ -144,22 +151,32 @@ public class Aquario extends JPanel {
 
     /**
      * Atualiza o "status" do aquário.
-     * Caso haja energia suficiente, uma nova vida (Plancton)
+     * Caso haja energia suficiente, tres novas vidas sao criadas
+     * (dois FitoPlancton e um ZooPlancton)
      * é criada a partir dos nutrientes.
      */
-    public synchronized void passagemDoTempo() {
-        if (energiaNutrientes >= FitoPlancton.ENERGIA_FITOPLANCTON) {
-            energiaNutrientes -= FitoPlancton.ENERGIA_FITOPLANCTON;
-            adicionarSerMarinho(new FitoPlancton());
-        }
-        if (energiaNutrientes >= ZooPlancton.ENERGIA_ZOOPLANCTON) {
-            energiaNutrientes -= ZooPlancton.ENERGIA_ZOOPLANCTON;
-            adicionarSerMarinho(new ZooPlancton());
-        }
+    public synchronized  void passagemDoTempo() {
+        if (Utilitarios.numeroAleatorio(0,5000) < 4000)
+        {
+             if (energiaNutrientes >= 2*FitoPlancton.ENERGIA_FITOPLANCTON) {
+                 energiaNutrientes -= 2*FitoPlancton.ENERGIA_FITOPLANCTON;
+                adicionarSerMarinho(new FitoPlancton());
+                adicionarSerMarinho(new FitoPlancton());
+            
+             }   
+          
+        } else {
         
+       
+         if (energiaNutrientes >= ZooPlancton.ENERGIA_ZOOPLANCTON) {
+             energiaNutrientes -= ZooPlancton.ENERGIA_ZOOPLANCTON;
+           adicionarSerMarinho(new ZooPlancton());
+         }
+        
+        }
         repaint();
+        
     }
-    
 
     /**
      * Remove um ser do aquário. Sua energia é devolvida
@@ -171,8 +188,11 @@ public class Aquario extends JPanel {
      */
 
     public synchronized void removerSerMarinho(SerMarinho sm) {
+        
+      
         seresMarinhos.remove(sm);
-        energiaNutrientes += sm.getEnergia(); // Pega energia
+        energiaNutrientes += sm.getEnergia(); // Pega energia 
+   
         // lol
         
     }

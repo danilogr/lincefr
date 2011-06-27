@@ -15,6 +15,13 @@ import simaqua.utils.Utilitarios;
  */
 public abstract class SerMarinho extends Thread {
 
+    /*
+       Variaveis utilizadas para resolver problemas de concorrência
+    */
+    
+    
+    
+    
     /**
      * Posição do ser marinho
      */
@@ -150,9 +157,12 @@ public abstract class SerMarinho extends Thread {
         if (comFome()) {
             List<SerMarinho> seresProximos = getAmbiente().getSeresMarinhosProximos(this);
             for (SerMarinho sm : seresProximos) {
-                if (isPresa(sm)) {
-                    devorar(sm);
-                    return;
+                synchronized(sm)
+                {
+                    if (sm.getEnergia() > 0 && isPresa(sm)) {
+                        devorar(sm);
+                        return;
+                    }
                 }
             }
         }
@@ -186,10 +196,14 @@ public abstract class SerMarinho extends Thread {
      * @param alimento o ser marinho a ser devorado
      */
     private void devorar(SerMarinho alimento) {
-        velocidadeMetabolismo = Math.abs(energia - alimento.getEnergia()) / 10;
-        energiaAlimento += alimento.getEnergia();
-        digerir();
+           velocidadeMetabolismo = Math.abs(energia - alimento.getEnergia()) / 10;
+           energiaAlimento += alimento.getEnergia();
+        /*
+            O alimento é morto antes de ser digerido, assim evitamos que o mesmo seja
+         * comido por outro animal
+         */
         alimento.matar();
+        digerir();
     }
 
     /**
@@ -212,7 +226,7 @@ public abstract class SerMarinho extends Thread {
      */
     protected void envelhecer() {
         if (comFome()) {
-            vitalidade -= 5000 / (1 + energia);
+                vitalidade -= 5000 / (1 + energia);
         } else {
             vitalidade -= 500 / (energia + 1);
         }
@@ -320,7 +334,7 @@ public abstract class SerMarinho extends Thread {
         double brilho = (double) vitalidade / 255;
         if (brilho < 0) {
             brilho = 0;
-        }
+        }   
         Color corVitalidade = new Color((int) (cor.getRed() * brilho), (int) (cor.getGreen() * brilho), (int) (cor.getBlue() * brilho));
         return corVitalidade;
     }

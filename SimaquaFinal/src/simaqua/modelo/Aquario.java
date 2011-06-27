@@ -75,6 +75,7 @@ public class Aquario extends JPanel {
     public synchronized List<SerMarinho> getSeresMarinhosProximos(SerMarinho sm) {
         List<SerMarinho> seresProximos = new ArrayList<SerMarinho>();
         for (SerMarinho sm2 : seresMarinhos) {
+            
             if (sm.proximo(sm2)) {
                 seresProximos.add(sm2);
             }
@@ -165,7 +166,7 @@ public class Aquario extends JPanel {
             
              }   
           
-        } else {
+        }else {
         
        
          if (energiaNutrientes >= ZooPlancton.ENERGIA_ZOOPLANCTON) {
